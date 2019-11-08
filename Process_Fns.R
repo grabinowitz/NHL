@@ -17,14 +17,14 @@ PostProcess <- function(df){
   #Format Date and Add Season
   df <-
     df %>% 
-    mutate(Season = ifelse(Date < 20160411, "Regular_1516",
-                           ifelse(Date < 20161012, "Playoffs_1516",
-                                  ifelse(Date < 20170410, "Regular_1617",
-                                         ifelse(Date < 20171004, "Playoffs_1617",
-                                                ifelse(Date < 20180409, "Regular_1718",
-                                                       ifelse(Date < 20181003, "Playoffs_1718",
-                                                              ifelse(Date < 20190410, "Regular_1819",
-                                                                     ifelse(Date < 20191004, "Playoffs_1819",
+    mutate(Season = ifelse(Date < "20160411", "Regular_1516",
+                           ifelse(Date < "20161012", "Playoffs_1516",
+                                  ifelse(Date < "20170410", "Regular_1617",
+                                         ifelse(Date < "20171004", "Playoffs_1617",
+                                                ifelse(Date < "20180409", "Regular_1718",
+                                                       ifelse(Date < "20181003", "Playoffs_1718",
+                                                              ifelse(Date < "20190410", "Regular_1819",
+                                                                     ifelse(Date < "20191002", "Playoffs_1819",
                                                                             "Regular_1920")))))))))
   Master_Table <-
     df %>% 

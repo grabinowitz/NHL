@@ -19,20 +19,22 @@ all.teams <-
 all.teams.list <- as.list(all.teams)
 
 ##### INPUTS ##############
-Start_Date = "2015-10-01" 
+Start_Date = "2017-10-01" 
 End_Date   = "2019-10-01"   
 ###########################
 
 source("Scrape_Fns.R")
-source("Process_Fns.R")
-
-#Get Data
-NHL_1519 <- getStats()
 
 
-#Read Data if necessary
-Extract <- data.table::fread("Data/NHL_1519_Extract.csv", )
 
 
-#Add columns
-Master_Table <- PostProcess(Extract)
+
+NHL_15today <- UpdateStatsTable(NHL_15today)
+Master_Table_15today <- PostProcess(NHL_15today)  
+
+
+Master_Table_15today %>% 
+  filter(Season == "Regular_1920") %>% 
+  group_by(Season, Player) %>% 
+  summarise(Total_Points = mean(Season_Points)) %>% 
+  arrange(desc(Total_Points))
