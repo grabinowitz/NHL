@@ -5,6 +5,7 @@ library(tidyverse)
 
 
 
+
 all.teams <-
   c("Anaheim Ducks", "Arizona Coyotes","Boston Bruins","Buffalo Sabres","Calgary Flames","Carolina Hurricanes",
     "Chicago Blackhawks","Colorado Avalanche","Columbus Blue Jackets","Dallas Stars","Detroit Red Wings","Edmonton Oilers",
@@ -24,13 +25,13 @@ End_Date   = "2019-10-01"
 ###########################
 
 source("Scrape_Fns.R")
+source("Process_Fns.R")
 
 
+Extract <- read_csv("Data/NHL_15to19.csv")
 
 
-
-NHL_15today <- UpdateStatsTable(NHL_15today)
-Master_Table_15today <- PostProcess(NHL_15today)  
+Master_Table <- PostProcess(Extract)  
 
 
 Master_Table_15today %>% 
