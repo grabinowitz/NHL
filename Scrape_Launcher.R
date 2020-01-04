@@ -2,7 +2,7 @@
 #Use Hockey Reference to find total shots on a given date
 library(rvest)
 library(tidyverse)
-
+library(lubridate)
 
 
 
@@ -20,8 +20,8 @@ all.teams <-
 all.teams.list <- as.list(all.teams)
 
 ##### INPUTS ##############
-Start_Date = "2017-10-01" 
-End_Date   = "2019-10-01"   
+Start_Date = "2019-10-01" 
+End_Date   = "2019-12-23"   
 ###########################
 
 source("Scrape_Fns.R")
@@ -30,6 +30,9 @@ source("Process_Fns.R")
 
 Extract <- read_csv("Data/NHL_15to19.csv")
 
+write_csv(Extract_1920, "Data/NHL_1920.csv")
+
+Extract_1920 <- GetStatsTable()
 
 Master_Table <- PostProcess(Extract)  
 
