@@ -93,9 +93,10 @@ getStats <- function(x){
 }
 
 
-GetStatsTable <- function(){
+GetStatsTable <- function(start, end){
   
-  links_out <- lapply(lapply(getDateList(Start_Date, End_Date), getDateLinks), getGameLinks)
+  
+  links_out <- lapply(lapply(getDateList(start, end), getDateLinks), getGameLinks)
   
   final_list <- list()
   for(i in 1:length(links_out)){
@@ -141,5 +142,14 @@ UpdateStatsTable <- function(Existing_Table){
   return(final_table)
 }
 
+
+updateExtract <- function(EXTRACT){
+  if(as_date(max(EXTRACT[["Date"]])) != today()){
+    delta <- GetStatsTable(as_date(max(EXTRACT[["Date"]])) + 1, today())
+  } else {
+    print("Date is up to date")
+  }
+  return(rbind(EXTRACT, delta))
+}
 
 
