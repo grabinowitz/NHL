@@ -1,5 +1,5 @@
 #Read in Data
-Master_Table <- read_csv("/Users/guyrabinowitz/JV/NHL/Scrape/Data/NHL_15to19.csv")
+Master_Table <- PostProcess(read_csv("Data/NHL_1519_Extract.csv"))
 
 #Team Analysis
 
@@ -83,6 +83,23 @@ Winlag <-
   select(-Win)
 
 Teams <- Teams %>% left_join(Winlag)
+
+Teams$Shots_RS <- (Teams$Shots - mean(Teams$Shots))/(sqrt(var(Teams$Shots)))
+Teams$Avg_Shots_RS <- (Teams$Avg_Shots - mean(Teams$Avg_Shots))/(sqrt(var(Teams$Avg_Shots)))
+Teams$Avg_Shots_Agst_Opp_RS <- (Teams$Avg_Shots_Agst_Opp - mean(Teams$Avg_Shots_Agst_Opp))/(sqrt(var(Teams$Avg_Shots_Agst_Opp)))
+
+
+Teams$Avg_Shots_RD <- round(Teams$Avg_Shots)
+Teams$Avg_Shots_Agst_Opp_RD <- factor(round(Teams$Avg_Shots_Agst_Opp))
+
+Teams$Shooting_Ratio <- Teams$Avg_Shots - Teams$Avg_Shots_Agst_Opp
+
+#Test GLMM
+test_glmer <- glmer(Shots ~ scale(Shooting_Ratio) + Loc + (1 | Team ) + (1 | Opp), 
+                    data = Teams, 
+                    family = poisson(link = "log"),
+                    control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=1000)),
+                    verbose=TRUE)
   
 Teams_trn <- filter(Teams, Game_Number >= 10 & Game_Number < 60, Season == "Regular_1718")
 Teams_tst <- filter(Teams, Game_Number >= 60, Season == "Regular_1718")   
@@ -97,6 +114,8 @@ ggplot(Teams %>% filter(str_detect(Season, "Regular")), aes(x = Shots, color = S
 glm_pois <- glm(Shots ~ Avg_Shots + Avg_Shots_Agst_Opp + Loc, family = "poisson", data = Teams_trn)
 glm_qpois <- glm(Shots ~ Avg_Shots + Avg_Shots_Agst_Opp + Loc, family = "quasipoisson", data = Teams_trn)
 glm_lm <- glm(Shots ~ Avg_Shots + Avg_Shots_Agst_Opp + Loc, family = "gaussian", data = Teams_trn)
+
+
 
 
 Hold_out <- tibble("Obs" = Teams_trn$Shots)
