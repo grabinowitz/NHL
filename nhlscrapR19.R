@@ -1,5 +1,5 @@
 library(nhlscrapr)
-gcodes <- seq(20001, 20761, 1)
+gcodes <- seq(20001, 20800, 1)
 
 scrape <- function(gcodes){
   tmp <- list()
@@ -11,6 +11,7 @@ scrape <- function(gcodes){
 }
 
 NHL1920 <- scrape(gcodes)
+saveRDS(NHL1920, "NHL1920.rds")
 
 list_to_pbp <- function(J){
  J[[1]]$refdate <- toString(J[["date"]])
@@ -20,23 +21,34 @@ list_to_pbp <- function(J){
  return(X)
 }
 
-saveRDS(NHL1920, "NHL1920.rds")
-
-nhl1920 <- NHL1920[1:759]
 
 
-test <- lapply(nhl1920, list_to_pbp)
-test23 <- lapply(test, function(x) (if(ncol(x) < 35) NULL))
+nhl1920 <- NHL1920
 
-for(i in 1:length(test)){
-  if(length(test[[i]]) < 35)
-    test[[i]] <- NULL
-}
+nhl1920_pbp <- lapply(NHL1920, list_to_pbp)
+nhl1920_pbp <- lapply(nhl1920_pbp, function(x) (if(ncol(x) < 35) NULL else x))
 
-test2 <- do.call(rbind, test)
 
-test2 %>% 
-  filter(etype %in% c("GOAL", "SHOT") & grepl("OVECHKIN", ev.player.1))
+nhl1920_pbp <- do.call(rbind, nhl1920_pbp)
+
+Team_Shots60 <-
+nhl1920_pbp %>% 
+  mutate(G = ifelse(etype == "GOAL", 1, 0), 
+         SH = ifelse(etype %in% c("GOAL", "SHOT"), 1, 0),
+         M = ifelse(etype == "MISS", 1, 0),
+         H = ifelse(etype == "HIT", 1, 0),
+         PEN = ifelse(etype == "PENL", 1, 0)) %>% 
+  group_by(season, gcode, refdate, ev.team) %>% 
+  summarise(Goals = sum(G),
+            Shots = sum(SH),
+            Misses = sum(M),
+            Hits = sum(H),
+            Penalties = sum(PEN))
+  
+
+
+
+
 
 shots <- 
   test2 %>% 
