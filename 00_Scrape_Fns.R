@@ -144,11 +144,12 @@ UpdateStatsTable <- function(Existing_Table){
 
 
 updateExtract <- function(EXTRACT){
-  if(as_date(max(EXTRACT[["Date"]])) != today()){
-    delta <- GetStatsTable(as_date(max(EXTRACT[["Date"]])) + 1, today())
+  if(as_date(as.character(max(EXTRACT[["Date"]]))) != today()){
+    delta <- GetStatsTable(as_date(as.character(max(EXTRACT[["Date"]]))) + 1, today())
   } else {
     print("Date is up to date")
   }
+  names(EXTRACT) <- names(delta)
   return(rbind(EXTRACT, delta))
 }
 

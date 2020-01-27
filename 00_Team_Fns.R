@@ -87,11 +87,3 @@ Team_PreProcess <- function(DF){
 
   return(DF)  
 }
-
-test <- Team_PreProcess(Master_Table)
-
-
-test %>% 
-  group_by(Team) %>% 
-  summarise(cnt = n()) %>% 
-  arrange(cnt)
